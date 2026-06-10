@@ -60,6 +60,7 @@ def test_upsert_profile_endpoint() -> None:
     body = response.json()
     assert body['data']['full_name'] == 'Anup Gupta'
     assert body['data']['master_resume']['skills'] == ['python', 'sql']
+    app.dependency_overrides.clear()
 
 
 def test_scrape_endpoint_returns_pending_status() -> None:
