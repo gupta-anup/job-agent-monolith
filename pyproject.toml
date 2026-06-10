@@ -7,8 +7,10 @@ dependencies = [
   "asyncpg>=0.30.0",
   "celery>=5.4.0",
   "fastapi>=0.115.0",
+  "playwright",
   "pydantic>=2.8.0",
   "pydantic-settings>=2.4.0",
+  "redis",
   "sqlalchemy>=2.0.35",
   "uvicorn>=0.30.0"
 ]
