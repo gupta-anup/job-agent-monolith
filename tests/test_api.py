@@ -70,6 +70,7 @@ def test_scrape_endpoint_returns_pending_status() -> None:
 
     assert response.status_code == 202
     assert response.json()['data']['status'] == 'pending'
+    app.dependency_overrides.clear()
 
 
 def test_get_application_status_endpoint() -> None:
