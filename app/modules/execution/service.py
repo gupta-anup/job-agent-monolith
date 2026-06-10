@@ -72,4 +72,4 @@ def _send_application_email(target_email: str, resume_path: Path, smtp_host: str
             smtp.send_message(message)
     except Exception as exc:
         logger.exception('Failed SMTP dispatch to %s', target_email)
-        raise ExecutionError('Failed to send application email') from exc
+        raise ExecutionError(f'Failed to send application email: {exc}') from exc
