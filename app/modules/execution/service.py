@@ -25,7 +25,10 @@ class ExecutionError(RuntimeError):
 
 async def execute_application(payload: ExecutionPayload) -> None:
     if payload.email:
-        _send_application_email(
+        import asyncio
+
+        await asyncio.to_thread(
+            _send_application_email,
             payload.email,
             payload.resume_path,
             settings.smtp_host,
