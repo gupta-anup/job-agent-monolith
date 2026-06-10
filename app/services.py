@@ -64,6 +64,11 @@ class ApplicationService:
             scrape_and_process_application.delay(str(job.id), str(application.id), payload.target_url)
         except Exception as exc:
             logger.exception('Failed to enqueue celery task for app_id=%s', application.id)
+            try:
+                application.status = ApplicationStatus.failed
+                await self._session.commit()
+            except SQLAlchemyError:
+                await self._session.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail='Failed to enqueue scraping task',
