@@ -4,6 +4,7 @@ import logging
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
+MAX_RAW_JD_CHARS = 20_000
 
 
 @dataclass(slots=True)
@@ -39,7 +40,7 @@ async def scrape_job_posting(target_url: str, timeout_ms: int = 30_000) -> Scrap
 
         await page.goto(target_url, wait_until='domcontentloaded', timeout=timeout_ms)
         title = await page.title()
-        raw_jd = await page.locator('body').inner_text()
+        raw_jd = (await page.locator('body').inner_text())[:MAX_RAW_JD_CHARS]
 
         return ScrapedJobData(
             title=title or 'Unknown title',

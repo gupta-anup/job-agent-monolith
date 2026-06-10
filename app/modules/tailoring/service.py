@@ -8,6 +8,7 @@ STRICT_SYSTEM_PROMPT = (
     'the job description, but do not hallucinate any skill or experience not present in the master resume.'
 )
 MAX_PROMPT_LENGTH = 2_000
+MAX_JD_LENGTH = 4_000
 
 
 class TailoringError(RuntimeError):
@@ -22,7 +23,8 @@ async def generate_tailored_resume_pdf(master_resume: dict[str, Any], raw_jd: st
         raise TailoringError('reportlab is required for PDF generation') from exc
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    prompt = f"{STRICT_SYSTEM_PROMPT}\n\nMaster Resume:\n{master_resume}\n\nJob Description:\n{raw_jd}"
+    sanitized_jd = ' '.join(raw_jd.split())[:MAX_JD_LENGTH]
+    prompt = f"{STRICT_SYSTEM_PROMPT}\n\nMaster Resume:\n{master_resume}\n\nJob Description:\n{sanitized_jd}"
 
     pdf = canvas.Canvas(str(output_path), pagesize=letter)
     pdf.drawString(72, 750, 'Tailored Resume Preview')
