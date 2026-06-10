@@ -47,9 +47,12 @@ class ApplicationLog(Base):
     __tablename__ = 'application_logs'
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    job_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey('job_postings.id', ondelete='CASCADE'))
+    job_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey('job_postings.id', ondelete='CASCADE'),
+        nullable=False,
+    )
     status: Mapped[ApplicationStatus] = mapped_column(
-        Enum(ApplicationStatus, name='application_status', native_enum=True),
         nullable=False,
         default=ApplicationStatus.pending,
     )
