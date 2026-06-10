@@ -75,8 +75,8 @@ def _send_application_email(
     try:
         message = EmailMessage()
         message['Subject'] = 'Job Application'
+        message['From'] = smtp_username or 'no-reply@localhost'
         message['To'] = target_email
-        message.set_content('Please find my tailored resume attached.')
         message.add_attachment(
             resume_path.read_bytes(),
             maintype='application',
