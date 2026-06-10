@@ -25,7 +25,15 @@ class ExecutionError(RuntimeError):
 
 async def execute_application(payload: ExecutionPayload) -> None:
     if payload.email:
-        _send_application_email(payload.email, payload.resume_path, settings.smtp_host, settings.smtp_port)
+        _send_application_email(
+            payload.email,
+            payload.resume_path,
+            settings.smtp_host,
+            settings.smtp_port,
+            settings.smtp_use_tls,
+            settings.smtp_username,
+            settings.smtp_password,
+        )
         return
 
     browser = None
@@ -55,7 +63,15 @@ async def execute_application(payload: ExecutionPayload) -> None:
             await playwright.stop()
 
 
-def _send_application_email(target_email: str, resume_path: Path, smtp_host: str, smtp_port: int) -> None:
+def _send_application_email(
+    target_email: str,
+    resume_path: Path,
+    smtp_host: str,
+    smtp_port: int,
+    smtp_use_tls: bool,
+    smtp_username: str | None,
+    smtp_password: str | None,
+) -> None:
     try:
         message = EmailMessage()
         message['Subject'] = 'Job Application'
@@ -69,6 +85,10 @@ def _send_application_email(target_email: str, resume_path: Path, smtp_host: str
         )
 
         with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as smtp:
+            if smtp_use_tls:
+                smtp.starttls()
+            if smtp_username and smtp_password:
+                smtp.login(smtp_username, smtp_password)
             smtp.send_message(message)
     except Exception as exc:
         logger.exception('Failed SMTP dispatch to %s', target_email)
