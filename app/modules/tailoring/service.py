@@ -7,6 +7,7 @@ STRICT_SYSTEM_PROMPT = (
     'You are an expert resume tailoring assistant. Rewrite candidate bullet points so they align with '
     'the job description, but do not hallucinate any skill or experience not present in the master resume.'
 )
+MAX_PROMPT_LENGTH = 2_000
 
 
 class TailoringError(RuntimeError):
@@ -25,6 +26,6 @@ async def generate_tailored_resume_pdf(master_resume: dict[str, Any], raw_jd: st
 
     pdf = canvas.Canvas(str(output_path), pagesize=letter)
     pdf.drawString(72, 750, 'Tailored Resume Preview')
-    pdf.drawString(72, 730, prompt[:2000])
+    pdf.drawString(72, 730, prompt[:MAX_PROMPT_LENGTH])
     pdf.save()
     return output_path

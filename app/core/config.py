@@ -14,6 +14,8 @@ class Settings(BaseSettings):
         alias='DATABASE_URL',
     )
     redis_url: str = Field(default='redis://localhost:6379/0', alias='REDIS_URL')
+    smtp_host: str = Field(default='localhost', alias='SMTP_HOST')
+    smtp_port: int = Field(default=25, alias='SMTP_PORT')
 
 
 @lru_cache(maxsize=1)

@@ -29,11 +29,13 @@ class FakeApplication:
 
 
 class FakeService:
+    expected_target_url = 'https://example.com/jobs/1'
+
     async def upsert_profile(self, payload: ProfileUpsertRequest) -> FakeProfile:
         return FakeProfile(payload.full_name, payload.master_resume)
 
     async def create_scrape_application(self, payload: JobScrapeRequest) -> FakeApplication:
-        assert payload.target_url
+        assert payload.target_url == self.expected_target_url
         return FakeApplication(ApplicationStatus.pending)
 
     async def get_application_status(self, app_id: str) -> FakeApplication:

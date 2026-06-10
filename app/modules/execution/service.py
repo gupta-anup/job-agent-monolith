@@ -6,7 +6,10 @@ from dataclasses import dataclass
 from email.message import EmailMessage
 from pathlib import Path
 
+from app.core.config import get_settings
+
 logger = logging.getLogger(__name__)
+settings = get_settings()
 
 
 @dataclass(slots=True)
@@ -22,7 +25,7 @@ class ExecutionError(RuntimeError):
 
 async def execute_application(payload: ExecutionPayload) -> None:
     if payload.email:
-        _send_application_email(payload.email, payload.resume_path)
+        _send_application_email(payload.email, payload.resume_path, settings.smtp_host, settings.smtp_port)
         return
 
     browser = None
@@ -52,7 +55,7 @@ async def execute_application(payload: ExecutionPayload) -> None:
             await playwright.stop()
 
 
-def _send_application_email(target_email: str, resume_path: Path) -> None:
+def _send_application_email(target_email: str, resume_path: Path, smtp_host: str, smtp_port: int) -> None:
     try:
         message = EmailMessage()
         message['Subject'] = 'Job Application'
@@ -65,7 +68,7 @@ def _send_application_email(target_email: str, resume_path: Path) -> None:
             filename=resume_path.name,
         )
 
-        with smtplib.SMTP('localhost', 25, timeout=10) as smtp:
+        with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as smtp:
             smtp.send_message(message)
     except Exception as exc:
         logger.exception('Failed SMTP dispatch to %s', target_email)
