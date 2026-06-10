@@ -27,7 +27,11 @@ async def scrape_job_posting(target_url: str, timeout_ms: int = 30_000) -> Scrap
     try:
         from playwright.async_api import TimeoutError as PlaywrightTimeoutError
         from playwright.async_api import async_playwright
+    except ModuleNotFoundError as exc:
+        logger.exception('Playwright is not installed; cannot scrape %s', target_url)
+        raise IngestionError('Playwright is required for scraping') from exc
 
+    try:
         playwright = await async_playwright().start()
         browser = await playwright.chromium.launch(headless=True)
         context = await browser.new_context()
