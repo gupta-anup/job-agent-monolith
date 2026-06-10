@@ -31,6 +31,7 @@ async def scrape_jobs(
         data=JobScrapeResponse(app_id=application.id, job_id=application.job_id, status=application.status),
     )
 
+import uuid
 
 @router.get(
     '/applications/{app_id}/status',
@@ -38,7 +39,7 @@ async def scrape_jobs(
     status_code=status.HTTP_200_OK,
 )
 async def get_application_status(
-    app_id: str,
+    app_id: uuid.UUID,
     service: ApplicationService = Depends(get_application_service),
 ) -> ApiResponse[ApplicationStatusResponse]:
     application = await service.get_application_status(app_id)
