@@ -80,3 +80,4 @@ def test_get_application_status_endpoint() -> None:
 
     assert response.status_code == 200
     assert response.json()['data']['status'] == 'tailoring'
+    app.dependency_overrides.clear()
